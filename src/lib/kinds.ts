@@ -1,11 +1,15 @@
+// Soft pastel bubbles: `bg` fills the orb, `fg` is its text, `color` is the mid tone for dots and lines.
 export const SUITOR_KINDS = {
-  habit: { label: "Bad habit", color: "#d9622b" },
-  loop: { label: "Mindset loop", color: "#22a699" },
-  fear: { label: "Fear", color: "#8b5cf6" },
-  lie: { label: "Limiting belief", color: "#e11d48" },
-  sleep: { label: "Sleep", color: "#4f6bed" },
-  inaction: { label: "No action / no plan", color: "#7c8798" },
+  habit: { label: "Bad habit", bg: "#ffe4d1", fg: "#9a3d0a", color: "#f08a4b" },
+  loop: { label: "Mindset loop", bg: "#d4f1f6", fg: "#0b5c6e", color: "#3bb3c9" },
+  fear: { label: "Fear", bg: "#ebe2ff", fg: "#5530a8", color: "#8b6cf0" },
+  lie: { label: "Limiting belief", bg: "#ffdde5", fg: "#9d1638", color: "#ee5d82" },
+  sleep: { label: "Sleep", bg: "#dbe6ff", fg: "#1e3a99", color: "#5b7ff0" },
+  inaction: { label: "No action / no plan", bg: "#eeeef1", fg: "#2f3138", color: "#9a9ca5" },
 } as const;
+
+export const HOUSEHOLD = { label: "The household", bg: "#fff0b8", fg: "#7a5200", color: "#f2c230" };
+export const IDENTITY = { bg: "#e2f6cd", fg: "#2a5310", color: "#8fd36a" };
 
 export type SuitorKind = keyof typeof SUITOR_KINDS;
 
@@ -28,11 +32,10 @@ export const OUTCOMES = {
   resisted: "Resisted",
 } as const;
 
-export const GOLD = "#f5c451";
+type Kind = { label: string; bg: string; fg: string; color: string };
+const FALLBACK: Kind = SUITOR_KINDS.inaction;
+const k = (kind: string): Kind => (SUITOR_KINDS as Record<string, Kind>)[kind] ?? FALLBACK;
 
-export function kindColor(kind: string) {
-  return (SUITOR_KINDS as Record<string, { color: string }>)[kind]?.color ?? "#7c8798";
-}
-export function kindLabel(kind: string) {
-  return (SUITOR_KINDS as Record<string, { label: string }>)[kind]?.label ?? kind;
-}
+export const kindColor = (kind: string) => k(kind).color;
+export const kindLabel = (kind: string) => (kind in SUITOR_KINDS ? k(kind).label : kind);
+export const kindStyle = (kind: string) => ({ bg: k(kind).bg, fg: k(kind).fg, color: k(kind).color });

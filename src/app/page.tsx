@@ -1,16 +1,24 @@
 import Link from "next/link";
-import { Hall, type HallLink, type HallNode } from "@/components/Hall";
+import { Orbit, type OrbitOccupant, type OrbitSuitor } from "@/components/Orbit";
 import { sql } from "@/lib/db";
-import { as, houseLight } from "@/lib/queries";
-import { GOLD, SUITOR_KINDS, kindColor, kindLabel } from "@/lib/kinds";
+import { as, getIdentity, houseLight } from "@/lib/queries";
+import { HOUSEHOLD, IDENTITY, SUITOR_KINDS } from "@/lib/kinds";
 import { todayIn, userTimeZone } from "@/lib/time";
 import type { Occupant, Suitor } from "@/lib/types";
+
+const OrbitIcon = () => (
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden>
+    <circle cx="12" cy="12" r="3.2" />
+    <ellipse cx="12" cy="12" rx="10" ry="5.5" />
+    <circle cx="20.5" cy="9.5" r="1.3" fill="currentColor" stroke="none" />
+  </svg>
+);
 
 export default async function HallPage() {
   const tz = await userTimeZone();
   const db = sql();
   const since = todayIn(tz, -6);
-  const [suitors, occupants, links, reps, recent, kept, light] = await Promise.all([
+  const [suitors, occupants, links, reps, recent, kept, light, identity] = await Promise.all([
     db`select * from suitors where status <> 'evicted' order by weight desc`.then(as<Suitor>),
     db`select * from occupants where active`.then(as<Occupant>),
     db`select from_id, to_id from suitor_links`.then(as<{ from_id: number; to_id: number }>),
@@ -20,42 +28,27 @@ export default async function HallPage() {
     db`select occupant_id, count(*)::int as n from day_practices where day >= ${since}::date group by occupant_id`
       .then(as<{ occupant_id: number; n: number }>),
     houseLight(tz),
+    getIdentity(),
   ]);
   const evicted = (await db`select id, name from suitors where status = 'evicted' order by evicted_at desc`) as { id: number; name: string }[];
 
   const recentBy = new Map(recent.map((r) => [r.suitor_id, r.n]));
   const keptBy = new Map(kept.map((r) => [r.occupant_id, r.n]));
-  const repCount = new Map<number, number>();
-  for (const r of reps) repCount.set(r.occupant_id, (repCount.get(r.occupant_id) ?? 0) + 1);
-
   const live = new Set(suitors.map((s) => s.id));
-  const nodes: HallNode[] = [
-    ...suitors.map((s) => ({
-      id: `s${s.id}`, group: "suitor" as const, label: s.name,
-      detail: [kindLabel(s.kind), s.lie ? `Lie: “${s.lie}”` : null, s.status === "evicting" ? "Being evicted" : null]
-        .filter(Boolean).join(" · "),
-      color: kindColor(s.kind), r: 14 + s.weight * 6, href: `/suitors/${s.id}`,
-      status: s.status, root: s.is_root, recent: recentBy.get(s.id) ?? 0,
-      labeled: s.weight >= 4 || s.status === "evicting" || s.is_root || (recentBy.get(s.id) ?? 0) > 0,
-    })),
-    // The household only shows up when it's actually living here: practices kept this week, truths standing guard.
-    ...occupants
-      .filter((o) => (o.kind === "practice" ? (keptBy.get(o.id) ?? 0) > 0 : (repCount.get(o.id) ?? 0) > 0))
-      .map((o) => ({
-        id: `o${o.id}`, group: "occupant" as const,
-        label: o.reference ? `${o.name} (${o.reference})` : o.name,
-        detail: o.kind === "practice" ? `Kept ${keptBy.get(o.id)}× this week` : o.content ?? undefined,
-        color: GOLD,
-        r: o.kind === "practice" ? 6 + (keptBy.get(o.id) ?? 0) * 2.2 : 5 + (repCount.get(o.id) ?? 0) * 1.5,
-        href: `/household#o${o.id}`,
-      })),
-  ];
-  const hallLinks: HallLink[] = [
-    ...links.filter((l) => live.has(l.from_id) && live.has(l.to_id))
-      .map((l) => ({ source: `s${l.from_id}`, target: `s${l.to_id}`, type: "feeds" as const })),
-    ...reps.filter((r) => live.has(r.suitor_id))
-      .map((r) => ({ source: `o${r.occupant_id}`, target: `s${r.suitor_id}`, type: "replaces" as const })),
-  ];
+
+  const orbitSuitors: OrbitSuitor[] = suitors.map((s) => ({
+    id: s.id, name: s.name, kind: s.kind, weight: s.weight, status: s.status, root: s.is_root,
+    recent: recentBy.get(s.id) ?? 0, lie: s.lie,
+    feeds: links.filter((l) => l.from_id === s.id && live.has(l.to_id)).map((l) => l.to_id),
+  }));
+
+  // The household orbits closest: truths that stand guard, and practices actually kept this week.
+  const orbitOccupants: OrbitOccupant[] = occupants
+    .map((o) => ({
+      id: o.id, name: o.name, reference: o.reference, kind: o.kind, kept: keptBy.get(o.id) ?? 0,
+      replaces: reps.filter((r) => r.occupant_id === o.id && live.has(r.suitor_id)).map((r) => r.suitor_id),
+    }))
+    .filter((o) => (o.kind === "practice" ? o.kept > 0 : o.replaces.length > 0));
 
   const evicting = suitors.filter((s) => s.status === "evicting");
   const root = suitors.find((s) => s.is_root);
@@ -63,66 +56,73 @@ export default async function HallPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div>
-          <h1>The Hall</h1>
-          <p>Everything occupying the house right now. Bigger means it takes up more of your life. A glow means it showed up in the last three days. Gold is what&rsquo;s living here instead. Hover for names, click to open.</p>
+      <div className="card">
+        <div className="card-head">
+          <div>
+            <h1 className="card-title" style={{ fontSize: "1.2rem" }}><OrbitIcon /> What&rsquo;s orbiting my life</h1>
+            <p className="card-sub">Everything occupying the house right now, circling who you are. Bigger means it takes more room. Tap anything to open it.</p>
+          </div>
+          <div style={{ minWidth: 210 }}>
+            <div className="spread"><small style={{ fontWeight: 600 }}>Light in the house</small><strong style={{ color: IDENTITY.fg }}>{pct}%</strong></div>
+            <div className="meter" style={{ marginTop: 6 }}><div style={{ width: `${Math.max(2, pct)}%` }} /></div>
+            <small className="faint">{Math.round(light.occupied * 100)}% practices kept · {Math.round(light.evicted * 100)}% evicted</small>
+          </div>
         </div>
-        <div style={{ minWidth: 220 }}>
-          <div className="spread"><small>Light in the house</small><strong className="serif" style={{ color: "var(--gold)" }}>{pct}%</strong></div>
-          <div className="meter" style={{ marginTop: 6 }}><div style={{ width: `${Math.max(2, pct)}%` }} /></div>
-          <small className="faint">{Math.round(light.occupied * 100)}% practices kept this week · {Math.round(light.evicted * 100)}% evicted</small>
+
+        {suitors.length === 0 && orbitOccupants.length === 0 && !identity.text && (
+          <p className="muted" style={{ textAlign: "center" }}>
+            The house is quiet. Start with who you are in the centre, then <Link href="/suitors">name what&rsquo;s occupying it</Link>.
+          </p>
+        )}
+        <Orbit suitors={orbitSuitors} occupants={orbitOccupants} identity={identity} light={light.light} />
+
+        <div className="legend">
+          <span style={{ background: IDENTITY.bg, color: IDENTITY.fg }}>Who I am</span>
+          <span style={{ background: HOUSEHOLD.bg, color: HOUSEHOLD.fg }}>The household</span>
+          {Object.entries(SUITOR_KINDS).map(([k, v]) => (
+            <span key={k} style={{ background: v.bg, color: v.fg }}>{v.label}</span>
+          ))}
+          <span style={{ background: "#f5f7fb", color: "#646a80" }}>Dashed ring = being evicted · pulsing = showed up in the last 3 days</span>
         </div>
       </div>
 
-      {suitors.length === 0 && occupants.length === 0 ? (
-        <div className="card">
-          <h2>The house is quiet.</h2>
-          <p className="muted">Start by naming what&rsquo;s occupying it.</p>
-          <Link className="btn primary" href="/suitors">Name a suitor</Link>
-        </div>
-      ) : (
-        <>
-          <Hall nodes={nodes} links={hallLinks} light={light.light} />
-          <div className="legend">
-            {Object.entries(SUITOR_KINDS).map(([k, v]) => (
-              <span key={k}><i className="dot" style={{ background: v.color }} />{v.label}</span>
-            ))}
-            <span><i className="dot" style={{ background: GOLD, boxShadow: `0 0 8px ${GOLD}` }} />The household</span>
-            <span className="faint">Dashed ring = being evicted, drifting toward the door</span>
-          </div>
-        </>
-      )}
-
       <div className="grid-2 section">
-        <div className="card gold">
-          <h3>Who&rsquo;s being evicted</h3>
+        <div className="card">
+          <div className="card-head" style={{ marginBottom: 6 }}>
+            <div>
+              <h2 className="card-title">Who&rsquo;s being evicted</h2>
+              <p className="card-sub">And what&rsquo;s taking their room.</p>
+            </div>
+          </div>
           {evicting.length === 0 ? (
             <p className="muted">No one yet. Pick one suitor, give its room to something better, and set it to &ldquo;being evicted&rdquo;.</p>
           ) : (
             <ul className="list">
               {evicting.map((s) => (
                 <li key={s.id} className="spread">
-                  <Link href={`/suitors/${s.id}`}>{s.name}</Link>
+                  <Link href={`/suitors/${s.id}`} style={{ fontWeight: 600, textDecoration: "none" }}>{s.name}</Link>
                   <span className="pill gold">{reps.filter((r) => r.suitor_id === s.id).length} occupying its room</span>
                 </li>
               ))}
             </ul>
           )}
-          <div className="row" style={{ marginTop: 12 }}>
+          <div className="row" style={{ marginTop: 14 }}>
             <Link className="btn primary" href="/rhythm">Today&rsquo;s rhythm</Link>
             <Link className="btn" href="/log">Log an encounter</Link>
           </div>
         </div>
 
         <div className="card">
-          <blockquote className="quote" style={{ margin: 0 }}>
+          <blockquote className="quote" style={{ margin: 0, fontSize: "1.05rem" }}>
             &ldquo;When it arrives, it finds the house unoccupied, swept clean and put in order. Then it goes and takes with it seven other spirits more wicked than itself.&rdquo;
             <cite>Matthew 12:44–45 · so don&rsquo;t just evict, occupy.</cite>
           </blockquote>
+          <p className="muted" style={{ marginTop: 14, fontSize: "0.9rem" }}>
+            Odysseus came home after twenty years, disguised as a beggar. No one knew him, except Argus, his old dog, who lifted his head and knew his master. Whatever orbits you, the centre stays true.
+          </p>
           {root && (
-            <p style={{ marginTop: 14 }}>
-              <small>First domino: </small><Link href={`/suitors/${root.id}`}>{root.name}</Link>
+            <p style={{ marginTop: 6 }}>
+              <small>First domino: </small><Link href={`/suitors/${root.id}`} style={{ fontWeight: 600 }}>{root.name}</Link>
             </p>
           )}
           {evicted.length > 0 && (

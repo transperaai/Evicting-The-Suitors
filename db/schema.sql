@@ -102,3 +102,10 @@ create table if not exists day_practices (
 
 create index if not exists encounters_occurred_idx on encounters (occurred_at desc);
 create index if not exists triggers_suitor_idx on triggers (suitor_id);
+
+-- Who I am: the centre everything else orbits.
+-- (Argus knew Odysseus after twenty years, even in disguise.)
+create table if not exists settings (
+  key   text primary key,
+  value text
+);

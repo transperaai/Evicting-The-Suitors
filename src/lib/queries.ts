@@ -61,3 +61,11 @@ export async function houseLight(tz: string) {
   const evicted = r.total_weight ? (r.evicted_weight + 0.25 * r.evicting_weight) / r.total_weight : 0;
   return { light: 0.6 * occupied + 0.4 * evicted, occupied, evicted, ...r };
 }
+
+export async function getIdentity() {
+  const rows = as<{ key: string; value: string | null }>(
+    await sql()`select key, value from settings where key in ('identity', 'identity_ref')`,
+  );
+  const get = (k: string) => rows.find((r) => r.key === k)?.value ?? null;
+  return { text: get("identity"), reference: get("identity_ref") };
+}

@@ -8,7 +8,7 @@ Odysseus came home to a house full of suitors eating his food and wasting his da
 
 | Page | What it's for |
 |---|---|
-| **The Hall** | An animated bucket of everything occupying your life. Size = how much room it takes, glow = it showed up in the last 3 days, dashed ring = being evicted (it drifts toward the door). Gold orbs are the household: practices you've actually kept this week and truths standing guard. The whole app gets brighter as the house fills with light. |
+| **The Hall** | Everything occupying your life, orbiting a centre circle where you write **who you are** (like Argus, who still knew Odysseus after twenty years). The household (truths standing guard + practices kept this week) circles closest; suitors orbit further out, sized by how much room they take. Dashed ring = being evicted, pulse = showed up in the last 3 days. Hover to see the chain. The page brightens as the house fills with light. |
 | **Suitors** | Each fear, habit, loop, lie, sleep problem or kind of inaction. Its card holds the lie underneath it, what it sounds like, what it costs, its triggers (with a **room/location**), the chain (what feeds it, what it feeds) and who occupies its room. |
 | **Household** | Truths (scripture you choose) and practices. These are what replace each suitor. |
 | **Rooms** | Every location where suitors get in, and the handwritten notes you've placed there. A room with a suitor but no placed note is an **unguarded door**. |

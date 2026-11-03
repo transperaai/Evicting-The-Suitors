@@ -270,3 +270,13 @@ export async function handOver(form: FormData) {
   done();
   redirect("/loop?handed=1");
 }
+
+/* ── identity ────────────────────────────────────── */
+
+export async function updateIdentity(form: FormData) {
+  for (const [key, field] of [["identity", "identity"], ["identity_ref", "reference"]] as const) {
+    await sql()`insert into settings (key, value) values (${key}, ${str(form, field)})
+                on conflict (key) do update set value = excluded.value`;
+  }
+  done();
+}
