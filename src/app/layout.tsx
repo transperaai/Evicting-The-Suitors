@@ -5,6 +5,7 @@ import { Nav } from "@/components/Nav";
 import { TimeZoneCookie } from "@/components/TimeZoneCookie";
 import { houseLight } from "@/lib/queries";
 import { userTimeZone } from "@/lib/time";
+import { stageFor } from "@/lib/stage";
 
 const sans = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export const viewport: Viewport = { themeColor: "#b8cdf5", colorScheme: "light" };
+export const viewport: Viewport = { themeColor: "#10142a" };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   let light = 0;
@@ -24,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     // No database yet: the page shows setup help.
   }
   return (
-    <html lang="en" className={sans.variable}>
+    <html lang="en" className={sans.variable} data-stage={stageFor(light)}>
       <body style={{ "--light": light.toFixed(3) } as React.CSSProperties}>
         <TimeZoneCookie />
         <Nav />

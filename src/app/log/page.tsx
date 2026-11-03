@@ -86,7 +86,7 @@ export default async function LogPage({ searchParams }: { searchParams: Promise<
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(24, 1fr)", gap: 2, alignItems: "end", height: 70, marginTop: 6 }}>
                   {Array.from({ length: 24 }, (_, h) => {
                     const n = hours.find((x) => x.h === h)?.n ?? 0;
-                    return <div key={h} title={`${h}:00 · ${n}`} style={{ height: `${Math.max(3, (n / maxHour) * 100)}%`, background: n ? "var(--ember)" : "rgba(255,244,220,0.06)", borderRadius: 2 }} />;
+                    return <div key={h} title={`${h}:00 · ${n}`} style={{ height: `${Math.max(3, (n / maxHour) * 100)}%`, background: n ? "var(--ember)" : "var(--track)", borderRadius: 2 }} />;
                   })}
                 </div>
                 <div className="spread faint" style={{ fontSize: "0.72rem" }}><span>12am</span><span>6am</span><span>12pm</span><span>6pm</span><span>11pm</span></div>

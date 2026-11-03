@@ -213,7 +213,7 @@ export function Orbit({
         <svg className="rings" viewBox={`0 0 ${w} ${h}`} aria-hidden>
           {layout.rings.map((r, i) => layout.used[i] && (
             <ellipse key={i} cx={w / 2} cy={h / 2} rx={r.rx} ry={r.ry} fill="none"
-              stroke={i === 0 ? "#f2d77a" : "#d9e0ef"} strokeWidth={1.5} strokeDasharray={i === 0 ? "2 6" : "4 7"} />
+              style={{ stroke: i === 0 ? "#f2d77a" : "var(--ring)" }} strokeWidth={1.5} strokeDasharray={i === 0 ? "2 6" : "4 7"} />
           ))}
           {related?.lines.map((l, i) => {
             const a = pos.current.get(l.from), b = pos.current.get(l.to);

@@ -13,7 +13,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <input type="hidden" name="next" value={sp.next ?? "/"} />
           <label htmlFor="passphrase">Passphrase</label>
           <input id="passphrase" name="passphrase" type="password" autoFocus required autoComplete="current-password" />
-          {sp.error && <p style={{ color: "#f19a9d", marginTop: 8 }}>That&rsquo;s not it.</p>}
+          {sp.error && <p style={{ color: "var(--danger)", marginTop: 8 }}>That&rsquo;s not it.</p>}
           <button className="primary" style={{ marginTop: 12, width: "100%" }}>Enter the house</button>
         </form>
       )}

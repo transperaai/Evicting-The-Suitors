@@ -8,7 +8,7 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
       {noDb ? (
         <>
           <p className="muted">The app needs a Neon Postgres database. Set <code>DATABASE_URL</code>, then run:</p>
-          <pre style={{ background: "rgba(0,0,0,.4)", padding: 12, borderRadius: 8 }}>npm run db:seed</pre>
+          <pre style={{ background: "var(--soft)", padding: 12, borderRadius: 8 }}>npm run db:seed</pre>
         </>
       ) : (
         <p className="muted">{error.message || "Unknown error"}</p>

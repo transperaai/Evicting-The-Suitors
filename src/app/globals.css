@@ -1,45 +1,116 @@
+/*
+ * The house goes from night to day as you make progress.
+ * <html data-stage="0..4"> is set from "light in the house":
+ *   0 Night · 1 Before dawn · 2 Dawn · 3 Morning · 4 Day
+ * Every colour below is a token, so the whole app moves through the sunrise together.
+ */
 :root {
   --light: 0;
-  --page-a: #b8cdf5;
-  --page-b: #dfe9ff;
-  --card: #ffffff;
-  --soft: #f5f7fb;
-  --line: #e9edf5;
-  --line-strong: #d7ddea;
-  --text: #1d1f2b;
-  --muted: #646a80;
-  --faint: #9aa0b3;
-  --ink: #1d1f2b;
-  --gold: #8a5d00;
-  --gold-bg: #fff0b8;
-  --gold-mid: #f2c230;
-  --green: #2a5310;
-  --green-bg: #e2f6cd;
-  --ember: #b2481a;
-  --ember-bg: #ffe4d1;
-  --ok: #2f7a3a;
-  --ok-bg: #e2f6cd;
-  --danger: #c2334d;
-  --danger-bg: #ffe3e8;
   --sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --serif: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --radius: 28px;
-  --shadow: 0 1px 2px rgba(40, 60, 120, 0.06), 0 14px 36px rgba(40, 60, 120, 0.12);
+}
+
+/* ── dark tones (night → dawn) ── */
+:root, :root[data-stage="0"], :root[data-stage="1"], :root[data-stage="2"] {
+  color-scheme: dark;
+  --text: #e9ebf5;
+  --muted: #a2a9c4;
+  --faint: #6c7393;
+  --ink: #eef0f8;
+  --ink-text: #12152a;
+  --gold: #f4d27a;      --gold-bg: rgba(242, 194, 48, 0.16);
+  --green: #bfe9a0;     --green-bg: rgba(143, 211, 106, 0.17);
+  --ember: #ffb48a;     --ember-bg: rgba(240, 138, 75, 0.17);
+  --ok: #bfe9a0;        --ok-bg: rgba(143, 211, 106, 0.15);
+  --danger: #ff9fb2;    --danger-bg: rgba(238, 93, 130, 0.17);
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 16px 40px rgba(0, 0, 0, 0.42);
+  --ring: rgba(255, 255, 255, 0.13);
+  --focus: #8fa8ec;
+}
+:root, :root[data-stage="0"] {               /* Night */
+  --sky-top: #05060c; --sky-bottom: #10142a;
+  --horizon: rgba(90, 100, 180, 0.10);
+  --stars: 0.9;
+  --card: #141a2e; --card-gold: #1d2033; --soft: #1e2540; --soft-hover: #273050;
+  --line: #252d48; --line-strong: #323b5c; --track: #232a45;
+  --nav-bg: rgba(20, 26, 46, 0.88); --head: #b5bcd6;
+}
+:root[data-stage="1"] {                      /* Before dawn */
+  --sky-top: #0b1028; --sky-bottom: #28305f;
+  --horizon: rgba(150, 120, 210, 0.28);
+  --stars: 0.55;
+  --card: #1a2144; --card-gold: #252640; --soft: #252d55; --soft-hover: #2f3866;
+  --line: #2d3561; --line-strong: #3b4475; --track: #2a3259;
+  --nav-bg: rgba(26, 33, 68, 0.88); --head: #c0c5e0;
+}
+:root[data-stage="2"] {                      /* Dawn */
+  --sky-top: #232655; --sky-bottom: #8a6aa6;
+  --horizon: rgba(255, 170, 130, 0.55);
+  --stars: 0.15;
+  --card: #262a55; --card-gold: #34304f; --soft: #323769; --soft-hover: #3c4279;
+  --line: #3a407a; --line-strong: #4a5190; --track: #353b6e;
+  --nav-bg: rgba(38, 42, 85, 0.88); --head: #ece6f6;
+}
+
+/* ── light tones (morning → day) ── */
+:root[data-stage="3"], :root[data-stage="4"] {
   color-scheme: light;
+  --stars: 0;
+  --card: #ffffff; --card-gold: #fffaf0; --soft: #f3f5fb; --soft-hover: #e8edf7;
+  --line: #e9edf5; --line-strong: #d7ddea; --track: #edf0f7;
+  --nav-bg: rgba(255, 255, 255, 0.92);
+  --text: #1d1f2b; --muted: #646a80; --faint: #9aa0b3; --head: #3f4766;
+  --ink: #1d1f2b; --ink-text: #ffffff;
+  --gold: #8a5d00;   --gold-bg: #fff0b8;
+  --green: #2a5310;  --green-bg: #e2f6cd;
+  --ember: #b2481a;  --ember-bg: #ffe4d1;
+  --ok: #2f7a3a;     --ok-bg: #e2f6cd;
+  --danger: #c2334d; --danger-bg: #ffe3e8;
+  --shadow: 0 1px 2px rgba(40, 60, 120, 0.06), 0 14px 36px rgba(40, 60, 120, 0.12);
+  --ring: #d9e0ef;
+  --focus: #8fa8ec;
+}
+:root[data-stage="3"] {                      /* Morning */
+  --sky-top: #8ea8e6; --sky-bottom: #f6d2bd;
+  --horizon: rgba(255, 214, 170, 0.6);
+  --head: #2f3656;
+}
+:root[data-stage="4"] {                      /* Day */
+  --sky-top: #b8cdf5; --sky-bottom: #e4edff;
+  --horizon: rgba(255, 255, 255, 0.6);
 }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; }
 body {
   min-height: 100vh;
-  /* The page brightens as the house fills with light. */
   background:
-    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 255, 255, calc(0.25 + var(--light) * 0.5)), transparent 70%),
-    color-mix(in oklab, var(--page-a), var(--page-b) calc(var(--light) * 100%));
+    radial-gradient(ellipse 120% 55% at 50% 105%, var(--horizon), transparent 70%),
+    linear-gradient(180deg, var(--sky-top), var(--sky-bottom));
+  background-color: var(--sky-top);
   background-attachment: fixed;
   color: var(--text);
   font: 15px/1.55 var(--sans);
   -webkit-font-smoothing: antialiased;
+  transition: color .6s;
+}
+/* stars, fading out as dawn comes */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; opacity: var(--stars);
+  transition: opacity 1s;
+  background-image:
+    radial-gradient(1.2px 1.2px at 12% 18%, #fff, transparent),
+    radial-gradient(1px 1px at 27% 62%, #fff, transparent),
+    radial-gradient(1.4px 1.4px at 41% 9%, #fff, transparent),
+    radial-gradient(1px 1px at 58% 33%, #fff, transparent),
+    radial-gradient(1.3px 1.3px at 72% 14%, #fff, transparent),
+    radial-gradient(1px 1px at 86% 47%, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 93% 8%, #fff, transparent),
+    radial-gradient(1px 1px at 6% 78%, #fff, transparent),
+    radial-gradient(1px 1px at 66% 72%, #fff, transparent),
+    radial-gradient(1.3px 1.3px at 34% 88%, #fff, transparent);
+  background-size: 640px 480px;
 }
 a { color: inherit; }
 h1, h2, h3 { font-family: var(--sans); font-weight: 700; letter-spacing: -0.015em; margin: 0 0 0.4em; }
@@ -56,7 +127,7 @@ small, .muted { color: var(--muted); }
   display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
   margin: 16px auto 0; max-width: 1180px; width: calc(100% - 32px);
   padding: 10px 12px 10px 20px; border-radius: 999px;
-  background: rgba(255, 255, 255, 0.92); box-shadow: var(--shadow);
+  background: var(--nav-bg); box-shadow: var(--shadow); transition: background-color .6s;
   position: sticky; top: 12px; z-index: 10; backdrop-filter: blur(10px);
 }
 .brand { font-weight: 750; font-size: 1.02rem; text-decoration: none; letter-spacing: -0.01em; }
@@ -65,7 +136,7 @@ small, .muted { color: var(--muted); }
   text-decoration: none; color: var(--muted); padding: 7px 13px; border-radius: 999px; font-size: 0.9rem; font-weight: 500;
 }
 .nav-links a:hover { color: var(--text); background: var(--soft); }
-.nav-links a.active { color: var(--text); background: #eef2fb; }
+.nav-links a.active { color: var(--text); background: var(--soft); }
 .nav-links a.loop-link { color: var(--green); background: var(--green-bg); font-weight: 600; }
 .nav-links a.loop-link:hover, .nav-links a.loop-link.active { filter: brightness(0.97); }
 
@@ -73,7 +144,7 @@ small, .muted { color: var(--muted); }
 
 /* ── layout bits ── */
 .page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
-.page-head p { color: #3f4766; max-width: 62ch; margin: 0; }
+.page-head p { color: var(--head); max-width: 62ch; margin: 0; }
 .grid { display: grid; gap: 16px; }
 .grid-2 { display: grid; gap: 18px; align-items: start; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); }
 .grid-3 { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
@@ -81,16 +152,17 @@ small, .muted { color: var(--muted); }
 .spread { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .stack > * + * { margin-top: 10px; }
 .section { margin-top: 32px; }
-.section > h2 { color: var(--ink); }
+.section > h2 { color: var(--text); }
 
 .card {
   background: var(--card); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow);
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--line);
+  transition: background-color .6s, border-color .6s;
 }
-.card.gold { background: linear-gradient(180deg, #fffaf0, #fff); box-shadow: var(--shadow), inset 0 0 0 1.5px var(--gold-bg); }
+.card.gold { background: linear-gradient(180deg, var(--card-gold), var(--card)); box-shadow: var(--shadow), inset 0 0 0 1.5px var(--gold-bg); }
 .card.warn { box-shadow: var(--shadow), inset 0 0 0 1.5px var(--danger-bg); }
 .card-link { display: block; text-decoration: none; transition: transform .15s, box-shadow .15s; }
-.card-link:hover { transform: translateY(-2px); box-shadow: 0 2px 4px rgba(40, 60, 120, 0.06), 0 20px 44px rgba(40, 60, 120, 0.16); }
+.card-link:hover { transform: translateY(-2px); border-color: var(--line-strong); }
 
 /* card header like a widget: icon · title / subtitle / divider */
 .card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap;
@@ -123,7 +195,7 @@ input, textarea, select {
   border-radius: 14px; padding: 10px 13px; font: inherit;
 }
 input:hover, textarea:hover, select:hover { border-color: var(--line-strong); }
-input:focus, textarea:focus, select:focus { outline: none; border-color: #8fa8ec; background: #fff; box-shadow: 0 0 0 4px rgba(120, 150, 240, 0.18); }
+input:focus, textarea:focus, select:focus { outline: none; border-color: var(--focus); background: var(--card); box-shadow: 0 0 0 4px rgba(120, 150, 240, 0.18); }
 textarea { min-height: 76px; resize: vertical; }
 input[type="checkbox"] { width: 20px; height: 20px; accent-color: #3a8a3f; padding: 0; flex: none; margin-top: 2px; }
 input[type="range"] { accent-color: #5b7ff0; padding: 0; border: 0; background: none; box-shadow: none; }
@@ -137,17 +209,17 @@ button, .btn {
   background: var(--soft); color: var(--text); border: 0;
   border-radius: 999px; padding: 9px 18px; font: inherit; font-size: 0.9rem; font-weight: 600; cursor: pointer; text-decoration: none;
 }
-button:hover, .btn:hover { background: #eaeef7; }
-button.primary, .btn.primary { background: var(--ink); color: #fff; }
-button.primary:hover, .btn.primary:hover { background: #33364a; }
+button:hover, .btn:hover { background: var(--soft-hover); }
+button.primary, .btn.primary { background: var(--ink); color: var(--ink-text); }
+button.primary:hover, .btn.primary:hover { background: var(--ink); filter: brightness(0.9); }
 button.ghost { background: transparent; color: var(--faint); padding: 4px 8px; font-weight: 500; }
 button.ghost:hover { color: var(--text); background: var(--soft); }
 button.danger { color: var(--danger); background: var(--danger-bg); }
 form.inline { display: inline; }
 
 .flash { padding: 11px 16px; border-radius: 16px; margin-bottom: 16px; font-size: 0.92rem; font-weight: 500; box-shadow: var(--shadow); }
-.flash.ok { background: #f2fbea; color: var(--green); }
-.flash.warn { background: #fff1f3; color: #8a1f35; }
+.flash.ok { background: var(--card); color: var(--green); }
+.flash.warn { background: var(--card); color: var(--danger); }
 
 /* ── the orbit (hall) ── */
 .orbit {
@@ -174,8 +246,9 @@ form.inline { display: inline; }
 .identity {
   position: absolute; left: 50%; top: 50%; border-radius: 50%; display: flex; flex-direction: column;
   align-items: center; justify-content: center; text-align: center; padding: 14px; cursor: pointer; z-index: 2;
-  background: radial-gradient(circle at 35% 30%, #f1fbe7, var(--green-bg) 65%);
-  color: var(--green); border: 0; font: inherit;
+  /* fixed colours: who you are stays the same in the night and in the day */
+  background: radial-gradient(circle at 35% 30%, #f1fbe7, #e2f6cd 65%);
+  color: #2a5310; border: 0; font: inherit;
   transition: box-shadow .4s;
 }
 .identity:hover { background: radial-gradient(circle at 35% 30%, #f5fdee, #d9f2c0 65%); }
@@ -186,26 +259,26 @@ form.inline { display: inline; }
 
 .identity-editor {
   position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(420px, calc(100% - 24px));
-  background: #fff; border-radius: 24px; padding: 20px; box-shadow: 0 20px 60px rgba(40, 60, 120, 0.28); z-index: 5;
+  background: var(--card); border-radius: 24px; padding: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); z-index: 5;
 }
 
 .orbit-tip {
   position: absolute; pointer-events: none; max-width: 270px; padding: 11px 14px; border-radius: 16px;
-  background: #fff; box-shadow: 0 12px 34px rgba(40, 60, 120, 0.2); font-size: 0.85rem; z-index: 6;
+  background: var(--card); color: var(--text); box-shadow: 0 12px 34px rgba(0, 0, 0, 0.3); font-size: 0.85rem; z-index: 6;
 }
 .orbit-tip strong { display: block; margin-bottom: 2px; }
 
 .legend { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
 .legend span { display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
 
-.meter { height: 8px; border-radius: 999px; background: #edf0f7; overflow: hidden; }
+.meter { height: 8px; border-radius: 999px; background: var(--track); overflow: hidden; }
 .meter > div { height: 100%; background: linear-gradient(90deg, #b6e48f, #5fb83a); border-radius: 999px; }
 
 .chain { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: 0.9rem; }
 
 .bars { display: grid; gap: 7px; }
 .bar-row { display: grid; grid-template-columns: 110px 1fr 46px; gap: 10px; align-items: center; font-size: 0.85rem; color: var(--text); }
-.bar-row .track { height: 9px; background: #eef1f7; border-radius: 999px; overflow: hidden; }
+.bar-row .track { height: 9px; background: var(--track); border-radius: 999px; overflow: hidden; }
 .bar-row .fill { height: 100%; background: #8fd36a; border-radius: 999px; }
 .bar-row .fill.ember { background: #f5a46f; }
 
@@ -220,6 +293,18 @@ form.inline { display: inline; }
 .note-card.planned { background: #fffdf3; border: 2px dashed #f0d77a; transform: none; box-shadow: none; }
 
 details > summary { list-style-position: inside; }
+
+/* ── the sunrise strip ── */
+.stages { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 10px; }
+.stage {
+  border: 0; border-radius: 12px; padding: 0; height: 30px; position: relative; overflow: hidden; cursor: pointer;
+  font-size: 0.68rem; font-weight: 700; letter-spacing: 0.02em; display: flex; align-items: flex-end; justify-content: center;
+  padding-bottom: 4px; opacity: 0.55; transition: opacity .2s, transform .2s;
+}
+.stage:hover { opacity: 0.85; background: inherit; }
+.stage.reached { opacity: 0.85; }
+.stage.current { opacity: 1; box-shadow: 0 0 0 2px var(--text); }
+.stage.previewing { opacity: 1; box-shadow: 0 0 0 2px var(--focus); }
 
 @media (max-width: 640px) {
   .nav { position: static; border-radius: 24px; padding: 12px; }

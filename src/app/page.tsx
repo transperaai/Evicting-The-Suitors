@@ -4,6 +4,8 @@ import { sql } from "@/lib/db";
 import { as, getIdentity, houseLight } from "@/lib/queries";
 import { HOUSEHOLD, IDENTITY, SUITOR_KINDS } from "@/lib/kinds";
 import { todayIn, userTimeZone } from "@/lib/time";
+import { stageFor } from "@/lib/stage";
+import { SunriseStrip } from "@/components/SunriseStrip";
 import type { Occupant, Suitor } from "@/lib/types";
 
 const OrbitIcon = () => (
@@ -63,7 +65,7 @@ export default async function HallPage() {
             <p className="card-sub">Everything occupying the house right now, circling who you are. Bigger means it takes more room. Tap anything to open it.</p>
           </div>
           <div style={{ minWidth: 210 }}>
-            <div className="spread"><small style={{ fontWeight: 600 }}>Light in the house</small><strong style={{ color: IDENTITY.fg }}>{pct}%</strong></div>
+            <div className="spread"><small style={{ fontWeight: 600 }}>Light in the house</small><strong style={{ color: "var(--green)" }}>{pct}%</strong></div>
             <div className="meter" style={{ marginTop: 6 }}><div style={{ width: `${Math.max(2, pct)}%` }} /></div>
             <small className="faint">{Math.round(light.occupied * 100)}% practices kept · {Math.round(light.evicted * 100)}% evicted</small>
           </div>
@@ -74,6 +76,7 @@ export default async function HallPage() {
             The house is quiet. Start with who you are in the centre, then <Link href="/suitors">name what&rsquo;s occupying it</Link>.
           </p>
         )}
+        <div style={{ marginBottom: 6 }}><SunriseStrip stage={stageFor(light.light)} light={light.light} /></div>
         <Orbit suitors={orbitSuitors} occupants={orbitOccupants} identity={identity} light={light.light} />
 
         <div className="legend">
@@ -82,7 +85,7 @@ export default async function HallPage() {
           {Object.entries(SUITOR_KINDS).map(([k, v]) => (
             <span key={k} style={{ background: v.bg, color: v.fg }}>{v.label}</span>
           ))}
-          <span style={{ background: "#f5f7fb", color: "#646a80" }}>Dashed ring = being evicted · pulsing = showed up in the last 3 days</span>
+          <span style={{ background: "var(--soft)", color: "var(--muted)" }}>Dashed ring = being evicted · pulsing = showed up in the last 3 days</span>
         </div>
       </div>
 

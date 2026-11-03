@@ -16,6 +16,8 @@ Odysseus came home to a house full of suitors eating his food and wasting his da
 | **Log** | Record when a suitor shows up: where, what set it off, gave in / redirected / resisted, whether a note helped. Shows when and where they come. |
 | **I'm in a loop** | The pattern interrupt: *"I am looking for certainty. It won't be found here."* Write it down, hand it over, and it's saved to today. |
 
+**Night to day:** the whole app moves through a sunrise as "light in the house" grows (60% practices kept this week, 40% suitors evicted): **Night** (0%, stars) → **Before dawn** (15%) → **Dawn** (35%) → **Morning** (55%, light cards) → **Day** (75%). Tap a stage on the Hall's sunrise strip to preview it. Your identity in the centre keeps the same colours in every stage.
+
 **The Matthew 12 rule:** a suitor can't be set to *being evicted* or *evicted* until at least one truth or practice has been given its room.
 
 ## Stack
